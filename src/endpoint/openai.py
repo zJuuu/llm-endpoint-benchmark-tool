@@ -11,23 +11,25 @@ def sendToOpenAIEndpoint(message_id, api_key, base_url, messages, model, max_tok
     time_to_last_token = 0
     total_tokens = 0
     
-    for chat_completion in client.chat.completions.create(
-        model=model,
-        messages=messages,
-        max_tokens=max_tokens,
-        stream=stream
-        ):
-        
-        total_tokens += 1 # Increment the total tokens because each chunk is a token
-        
-        if time.time() < time_to_first_token:
-            time_to_first_token = time.time()
-        
-        if time.time() > time_to_last_token:
-            time_to_last_token = time.time()
-        
-    time_to_first_token = time_to_first_token - start_time
-    time_to_last_token = time_to_last_token - start_time
-    time_to_completion = time_to_last_token - time_to_first_token
-    
+    try:
+        for chat_completion in client.chat.completions.create(
+            model=model,
+            messages=messages,
+            max_tokens=max_tokens,
+            stream=stream
+            ):
+            
+            total_tokens += 1 # Increment the total tokens because each chunk is a token
+            
+            if time.time() < time_to_first_token:
+                time_to_first_token = time.time()
+            
+            if time.time() > time_to_last_token:
+                time_to_last_token = time.time()
+            
+        time_to_first_token = time_to_first_token - start_time
+        time_to_last_token = time_to_last_token - start_time
+        time_to_completion = time_to_last_token - time_to_first_token
+    except Exception as e:
+        print(e)
     return message_id, time_to_first_token, time_to_last_token, time_to_completion, total_tokens
