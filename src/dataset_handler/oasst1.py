@@ -62,6 +62,10 @@ def getConversations(conversationCount: int, minContextMessages: int, maxContext
     else:
         messageTrees = messageTreesRaw
         
+    #messageList = []
+    #for messageTree in messageTrees:
+    #    messageList.append(messageTrees[messageTree])
+        
     return messageTrees
 
 def recursiveMessageSort(messageTree: 'list[dict]', parent_id: str) -> 'list[dict]':
