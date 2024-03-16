@@ -1,4 +1,5 @@
 
+import os
 from datasets import load_dataset
 
 
@@ -36,12 +37,6 @@ def getConversations(conversationCount: int, minContextMessages: int, maxContext
             #print(message["parent_id"], message["message_id"], message["role"], message["text"])
         
         #print("----")
-    
-    if minContextMessages and maxContextMessages:
-        tempMessageTreesRaw = messageTreesRaw.copy()
-        for messageTree in tempMessageTreesRaw:
-            if len(tempMessageTreesRaw[messageTree]) < minContextMessages or len(tempMessageTreesRaw[messageTree]) > maxContextMessages:
-                del messageTreesRaw[messageTree]
                 
     # make sure messages are in correct order and remove ids from the messages
     tempMessageTreesRaw = messageTreesRaw.copy()
@@ -50,6 +45,29 @@ def getConversations(conversationCount: int, minContextMessages: int, maxContext
         for message in messageTreesRaw[messageTree]:
             del message["message_id"]
             del message["parent_id"]
+    
+    if os.getenv('IS_INSTRUCT_MODEL') == 'True':
+    # merge messages where role is the same as the previous message
+        tempMessageTreesRaw = messageTreesRaw.copy()
+        for messageTree in tempMessageTreesRaw:
+            tempMessageTreesRaw[messageTree] = messageTreesRaw[messageTree].copy()
+            messageTreesRaw[messageTree] = []
+            lastRole = None
+            lastMessage = None
+            for message in tempMessageTreesRaw[messageTree]:
+                if lastRole == message["role"]:
+                    lastMessage["content"] += " " + message["content"]
+                else:
+                    messageTreesRaw[messageTree].append(message)
+                    lastMessage = message
+                lastRole = message["role"]
+    
+            
+    if minContextMessages and maxContextMessages:
+        tempMessageTreesRaw = messageTreesRaw.copy()
+        for messageTree in tempMessageTreesRaw:
+            if len(tempMessageTreesRaw[messageTree]) < minContextMessages or len(tempMessageTreesRaw[messageTree]) > maxContextMessages:
+                del messageTreesRaw[messageTree]
             
     messageTrees = dict()     
     if conversationCount:
