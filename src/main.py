@@ -56,7 +56,7 @@ def main():
             print("Time to first token: " + str(time_to_first_token))
             print("Time to last token: " + str(time_to_last_token))
             print("Time to completion: " + str(time_to_completion))
-            print("Total tokens: " + str(total_tokens))
+            #print("Total tokens: " + str(total_tokens)) # not sure if this is calculated correctly
             print("-------------------")
             
             results[message_id] = {
@@ -64,7 +64,7 @@ def main():
                 "time_to_first_token": time_to_first_token,
                 "time_to_last_token": time_to_last_token,
                 "time_to_completion": time_to_completion,
-                "total_tokens": total_tokens
+                #"total_tokens": total_tokens #not sure if this is calculated correctly
             }
             
         
