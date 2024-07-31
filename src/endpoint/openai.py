@@ -19,7 +19,7 @@ def sendToOpenAIEndpoint(message_id, api_key, base_url, messages, model, max_tok
             stream=stream
             ):
             #print(chat_completion.choices[0].delta.content)
-            total_tokens += 1 # Increment the total tokens because each chunk is a token
+            #total_tokens += 1 # Increment the total tokens because each chunk is a token (?)
             
             if time.time() < time_to_first_token:
                 time_to_first_token = time.time()
@@ -33,6 +33,6 @@ def sendToOpenAIEndpoint(message_id, api_key, base_url, messages, model, max_tok
     except Exception as e:
         print(e)
         print(message_id)
-        print(messages)
+        #print(messages)
         
     return message_id, time_to_first_token, time_to_last_token, time_to_completion, total_tokens
